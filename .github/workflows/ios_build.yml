@@ -1,0 +1,32 @@
+name: iOS Build
+
+on:
+  push:
+    branches:
+      - main  # Jab bhi main branch pe push hoga, build chalega
+
+jobs:
+  build:
+    runs-on: macos-latest  # MacOS machine use karega
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'  # Apne Flutter version ke hisaab se update karein
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build iOS App (No Code Signing)
+        run: |
+          flutter build ios --no-codesign  # No codesign because we are not uploading yet
+
+      - name: Upload Artifact (iOS Build)
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-build
+          path: build/ios/iphoneos
